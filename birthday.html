@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Surprise</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    overflow:hidden;
+    transition:1s;
+    background:white;
+}
+
+/* Background Video */
+
+#bgVideo{
+    position:fixed;
+    right:0;
+    bottom:0;
+    min-width:100%;
+    min-height:100%;
+    object-fit:cover;
+    z-index:-10;
+    opacity:0;
+    transition:1s;
+}
+
+/* Container */
+
+.container{
+    width:100%;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    position:relative;
+    text-align:center;
+}
+
+/* Ribbon */
+
+.ribbon{
+    background:rgba(0,0,0,0.7);
+    color:white;
+    padding:20px 40px;
+    border-radius:25px;
+    font-size:30px;
+    z-index:10;
+
+    backdrop-filter:blur(10px);
+
+    box-shadow:0 0 20px rgba(255,255,255,0.4);
+}
+
+/* Buttons */
+
+button{
+    padding:12px 25px;
+    border:none;
+    border-radius:30px;
+    background:#ff4081;
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+    margin:10px;
+    transition:0.3s;
+    z-index:10;
+}
+
+button:hover{
+    transform:scale(1.1);
+}
+
+/* Hearts */
+
+.heart{
+    position:absolute;
+    top:-20px;
+    color:pink;
+    animation:fall linear infinite;
+    font-size:20px;
+}
+
+@keyframes fall{
+    0%{
+        transform:translateY(-10vh);
+    }
+    100%{
+        transform:translateY(110vh);
+    }
+}
+
+/* Balloons */
+
+.balloon{
+    position:absolute;
+    bottom:-100px;
+    width:60px;
+    height:80px;
+    border-radius:50%;
+    animation:fly 6s linear forwards;
+}
+
+.balloon::after{
+    content:'';
+    position:absolute;
+    width:2px;
+    height:60px;
+    background:white;
+    left:50%;
+    top:80px;
+}
+
+@keyframes fly{
+    to{
+        transform:translateY(-120vh);
+    }
+}
+
+/* Decoration */
+
+.decor{
+    position:absolute;
+    top:20px;
+    width:100%;
+    text-align:center;
+    font-size:40px;
+    color:gold;
+    display:none;
+    z-index:10;
+}
+
+/* Disco Mode */
+
+@keyframes discoBG{
+
+    0%{background:#ff0080;}
+    15%{background:#00ffff;}
+    30%{background:#ffea00;}
+    45%{background:#00ff66;}
+    60%{background:#ff3300;}
+    75%{background:#9900ff;}
+    90%{background:#ff1493;}
+    100%{background:#00bfff;}
+}
+
+.disco-mode{
+    animation:discoBG 2s infinite;
+}
+
+/* Disco Lights */
+
+.disco-light{
+    position:absolute;
+    width:150px;
+    height:150px;
+    border-radius:50%;
+    filter:blur(50px);
+    opacity:0.6;
+    animation:moveLight 5s infinite alternate;
+}
+
+@keyframes moveLight{
+
+    0%{
+        transform:translate(0,0);
+    }
+
+    100%{
+        transform:translate(300px,200px);
+    }
+}
+
+/* Confetti */
+
+.confetti{
+    position:absolute;
+    width:12px;
+    height:12px;
+    top:-20px;
+    animation:confettiFall linear forwards;
+}
+
+@keyframes confettiFall{
+    to{
+        transform:translateY(110vh) rotate(720deg);
+    }
+}
+
+/* 3D Cake */
+
+#cake3d{
+    display:none;
+    font-size:130px;
+    position:relative;
+    bottom: -50px;
+    animation:cakeFloat 2s infinite alternate;
+    filter:drop-shadow(0 0 20px pink);
+    z-index:10;
+}
+
+@keyframes cakeFloat{
+
+    from{
+        transform:translateY(0px) rotate(-2deg);
+    }
+
+    to{
+        transform:translateY(-15px) rotate(2deg);
+    }
+}
+
+/* Candle */
+
+#candle{
+    position:absolute;
+    top:-40px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:40px;
+    cursor:pointer;
+}
+
+/* Fireworks */
+
+.firework{
+    position:absolute;
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    animation:explode 1s forwards;
+}
+
+@keyframes explode{
+
+    from{
+        transform:translate(0,0);
+        opacity:1;
+    }
+
+    to{
+        transform:
+        translate(
+        calc(200px * var(--x)),
+        calc(200px * var(--y))
+        );
+
+        opacity:0;
+    }
+}
+
+/* Final Message */
+
+#finalBox{
+    display:none;
+    background:rgba(0,0,0,0.7);
+    padding:40px;
+    border-radius:20px;
+    backdrop-filter:blur(10px);
+    color:white;
+    font-size:25px;
+    width:70%;
+    box-shadow:0 0 20px rgba(255,255,255,0.3);
+    z-index:10;
+}
+
+/* Floating Emojis */
+
+.emoji{
+    position:absolute;
+    font-size:30px;
+    animation:floatEmoji 8s linear infinite;
+}
+
+@keyframes floatEmoji{
+
+    0%{
+        transform:translateY(100vh);
+        opacity:0;
+    }
+
+    20%{
+        opacity:1;
+    }
+
+    100%{
+        transform:translateY(-120vh);
+        opacity:0;
+    }
+}
+.firework{
+    box-shadow:
+    0 0 10px white,
+    0 0 20px currentColor,
+    0 0 40px currentColor;
+}
+/* Confetti Cannon */
+
+.cannon-piece{
+
+    position:fixed;
+
+    width:15px;
+    height:15px;
+
+    top:50%;
+    left:50%;
+
+    z-index:9999;
+
+    border-radius:4px;
+
+    animation:cannonBlast 2s ease-out forwards;
+}
+
+@keyframes cannonBlast{
+
+    0%{
+        transform:translate(0,0)
+        rotate(0deg);
+
+        opacity:1;
+    }
+
+    100%{
+
+        transform:
+        translate(
+        calc(var(--x) * 1px),
+        calc(var(--y) * 1px)
+        )
+
+        rotate(720deg);
+
+        opacity:0;
+    }
+}
+/* Typing Love Letter */
+
+#loveLetter{
+
+    display:none;
+
+    width:80%;
+
+    max-width:700px;
+
+    margin-top:30px;
+
+    padding:25px;
+
+    background:rgba(0,0,0,0.7);
+
+    color:white;
+
+    border-radius:20px;
+
+    font-size:24px;
+
+    line-height:1.8;
+
+    backdrop-filter:blur(10px);
+
+    box-shadow:
+    0 0 20px rgba(255,255,255,0.3);
+
+    z-index:10;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- Background Video -->
+
+<video autoplay muted loop id="bgVideo">
+    <source src="https://cdn.coverr.co/videos/coverr-purple-sky-background-1560087902032?download=1080p" type="video/mp4">
+</video>
+
+<div class="container">
+
+    <div class="decor" id="decor">
+        🎉 HAPPY BIRTHDAY 🎉
+    </div>
+
+    <div class="ribbon" id="text">
+        its your special day 🎊
+    </div>
+
+    <div id="buttons">
+        <button onclick="nextStep()">Click</button>
+    </div>
+
+    <!-- Cake -->
+
+    <div id="cake3d">
+        
+        🎂
+        <div id="candle">🕯️</div>
+    </div>
+
+    <!-- Final Message -->
+
+    <div id="finalBox">
+        ❤️ Happy Birthday To You madamjii ❤️<br><br>
+       
+    </div>
+    <div id="loveLetter"></div>
+
+</div>
+
+<!-- Music -->
+
+<audio id="music" loop>
+    <source src="song-2.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+
+let step = 0;
+
+/* Text Steps */
+
+function nextStep(){
+
+    const text = document.getElementById("text");
+    const buttons = document.getElementById("buttons");
+
+    step++;
+
+    if(step === 1){
+
+        text.innerHTML =
+        "Happy birthday to you My special one 🫶🫀🎂";
+    }
+
+    else if(step === 2){
+
+        text.innerHTML =
+        "Do you want to see what I made ?";
+
+        buttons.innerHTML = `
+            <button onclick="yesClick()">Yes</button>
+            <button onclick="noClick()">No</button>
+        `;
+    }
+}
+
+/* No Button */
+
+function noClick(){
+
+    alert("Please dekh lijiye na 🥺");
+}
+
+/* Yes Button */
+
+function yesClick(){
+
+    const text =
+    document.getElementById("text");
+
+    const buttons =
+    document.getElementById("buttons");
+
+    text.innerHTML =
+    "Have a look ✨";
+
+    buttons.innerHTML = `
+        <button onclick="lightsOn()">
+        Lights On
+        </button>
+    `;
+
+    document.body.style.background =
+    "black";
+}
+
+/* Lights On */
+
+function lightsOn(){
+
+    document.body.style.background =
+    "white";
+
+    document.getElementById("buttons")
+    .innerHTML = `
+        <button onclick="playMusic()">
+        Play Music
+        </button>
+    `;
+}
+
+/* Music */
+
+function playMusic(){
+
+    let music =
+    document.getElementById("music");
+
+    music.play();
+
+    document.getElementById("buttons")
+    .innerHTML = `
+        <button onclick="decorate()">
+        Decorate
+        </button>
+    `;
+}
+
+/* Decoration */
+
+function decorate(){
+
+    document.getElementById("decor")
+    .style.display = "block";
+
+    document.body.classList
+    .add("disco-mode");
+
+    document.getElementById("bgVideo")
+    .style.opacity = "0.4";
+
+    document.getElementById("text")
+    .style.background = "black";
+
+    document.getElementById("text")
+    .style.color = "white";
+
+    /* Dance Lights */
+
+    for(let i=0;i<5;i++){
+
+        let light =
+        document.createElement("div");
+
+        light.classList.add("disco-light");
+
+        let colors = [
+            "red",
+            "blue",
+            "pink",
+            "cyan",
+            "yellow"
+        ];
+
+        light.style.background =
+        colors[Math.floor(
+        Math.random()*colors.length)];
+
+        light.style.left =
+        Math.random()*100 + "vw";
+
+        light.style.top =
+        Math.random()*100 + "vh";
+
+        document.body.appendChild(light);
+    }
+
+    /* Confetti */
+
+    for(let i=0;i<120;i++){
+
+        let confetti =
+        document.createElement("div");
+
+        confetti.classList.add("confetti");
+
+        confetti.style.left =
+        Math.random()*100 + "vw";
+
+        let confettiColors = [
+            "red","yellow","blue",
+            "green","pink","orange",
+            "purple","cyan"
+        ];
+
+        confetti.style.background =
+        confettiColors[
+        Math.floor(
+        Math.random()*confettiColors.length)];
+
+        confetti.style.animationDuration =
+        (2 + Math.random()*4) + "s";
+
+        document.body.appendChild(confetti);
+
+        setTimeout(()=>{
+            confetti.remove();
+        },6000);
+    }
+
+    document.getElementById("buttons")
+    .innerHTML = `
+        <button onclick="flyBalloon()">
+        Fly Balloon
+        </button>
+    `;
+}
+
+/* Balloons */
+
+function flyBalloon(){
+
+    for(let i=0;i<20;i++){
+
+        let balloon =
+        document.createElement("div");
+
+        balloon.classList.add("balloon");
+
+        balloon.style.left =
+        Math.random()*100 + "vw";
+
+        let colors = [
+            "red","blue","yellow",
+            "green","pink","orange"
+        ];
+
+        balloon.style.background =
+        colors[Math.floor(
+        Math.random()*colors.length)];
+
+        balloon.style.animationDuration =
+        (4 + Math.random()*3) + "s";
+
+        document.body.appendChild(balloon);
+
+        setTimeout(()=>{
+            balloon.remove();
+        },7000);
+    }
+
+    document.getElementById("buttons")
+    .innerHTML = `
+        <button onclick="showCake()">
+        Let's Cut The Cake
+        </button>
+    `;
+}
+
+/* Show Cake */
+
+function showCake(){
+
+    document.getElementById("cake3d")
+    .style.display = "block";
+
+    document.getElementById("buttons")
+    .innerHTML = `
+        <button onclick="finalMessage()">
+        click the candle , and make your wish 
+        Well I Have A Message For You
+        </button>
+    `;
+}
+
+/* Final Message */
+
+function finalMessage(){
+
+    document.getElementById("cake3d")
+    .style.display = "none";
+
+    document.getElementById("text")
+    .style.display = "none";
+
+    document.getElementById("buttons")
+    .style.display = "none";
+
+    document.getElementById("finalBox")
+    .style.display = "block";
+    typeLoveLetter();
+}
+
+/* Fireworks */
+
+function startFireworks(){
+
+    for(let i = 0; i < 200; i++){
+
+        let firework =
+        document.createElement("div");
+
+        firework.classList.add("firework");
+
+        let colors = [
+            "red",
+            "yellow",
+            "blue",
+            "pink",
+            "cyan",
+            "orange",
+            "white",
+            "lime"
+        ];
+
+        firework.style.background =
+        colors[Math.floor(Math.random()*colors.length)];
+
+        firework.style.position = "fixed";
+
+        firework.style.left = "50%";
+
+        firework.style.top = "50%";
+
+        firework.style.width = "10px";
+
+        firework.style.height = "10px";
+
+        firework.style.borderRadius = "50%";
+
+        firework.style.zIndex = "9999";
+
+        document.body.appendChild(firework);
+
+        let x =
+        (Math.random() - 0.5) * 800;
+
+        let y =
+        (Math.random() - 0.5) * 800;
+
+        firework.animate([
+
+            {
+                transform: "translate(0,0)",
+                opacity: 1
+            },
+
+            {
+                transform:
+                `translate(${x}px, ${y}px)`,
+
+                opacity: 0
+            }
+
+        ],{
+
+            duration: 1200,
+            easing: "ease-out"
+
+        });
+
+        setTimeout(()=>{
+
+            firework.remove();
+
+        },1200);
+    }
+}
+
+/* Candle Click */
+
+document.addEventListener("click", function(e){
+
+    if(e.target.id === "candle"){
+
+        e.target.innerHTML = "💨";
+
+        startFireworks();
+        confettiCannon();
+
+        setTimeout(()=>{
+
+            alert("Wish Made ✨");
+
+        },1000);
+    }
+});
+
+/* Hearts */
+
+for(let i=0;i<40;i++){
+
+    let heart =
+    document.createElement("div");
+
+    heart.classList.add("heart");
+
+    heart.innerHTML = "❤";
+
+    heart.style.left =
+    Math.random()*100 + "vw";
+
+    heart.style.animationDuration =
+    (3 + Math.random()*5) + "s";
+
+    heart.style.fontSize =
+    (15 + Math.random()*25) + "px";
+
+    document.body.appendChild(heart);
+}
+
+/* Floating Emojis */
+
+let emojis = [
+    "🎉","🎂","💖",
+    "🎈","✨","🥳","🎊"
+];
+
+setInterval(()=>{
+
+    let emoji =
+    document.createElement("div");
+
+    emoji.classList.add("emoji");
+
+    emoji.innerHTML =
+    emojis[Math.floor(
+    Math.random()*emojis.length)];
+
+    emoji.style.left =
+    Math.random()*100 + "vw";
+
+    emoji.style.animationDuration =
+    (5 + Math.random()*5) + "s";
+
+    document.body.appendChild(emoji);
+
+    setTimeout(()=>{
+        emoji.remove();
+    },9000);
+
+},800);
+/* Confetti Cannon */
+
+function confettiCannon(){
+
+    for(let i = 0; i < 300; i++){
+
+        let piece =
+        document.createElement("div");
+
+        piece.classList.add("cannon-piece");
+
+        let colors = [
+            "red",
+            "yellow",
+            "blue",
+            "green",
+            "pink",
+            "orange",
+            "purple",
+            "cyan",
+            "white"
+        ];
+
+        piece.style.background =
+        colors[Math.floor(Math.random()*colors.length)];
+
+        let x =
+        (Math.random() - 0.5) * 2000;
+
+        let y =
+        (Math.random() - 0.5) * 2000;
+
+        piece.style.setProperty("--x", x);
+
+        piece.style.setProperty("--y", y);
+
+        document.body.appendChild(piece);
+
+        setTimeout(()=>{
+
+            piece.remove();
+
+        },2000);
+    }
+}
+/* Typing Love Letter */
+
+function typeLoveLetter(){
+
+    let message = `
+My love, happy birthday 🎂✨ May 16th will always be my favorite day, because it’s the day the universe sent me you 🌍💫 Every laugh we’ve shared 😂, every quiet moment 🤍, every dream we’ve whispered 🌙 — they all trace back to you being born on this day. I hope this year brings you the kind of joy you give me so effortlessly: the deep, warm, can’t-stop-smiling kind 🥰🌻 I’m wishing you soft mornings ☀️, bold dreams 🚀, and a heart that feels as loved as you make mine feel 💖 Thank you for existing, for choosing me, and for making my world so much brighter ✨ I’ll spend today and every day after celebrating you 🎉🫶Happy birthday 🎉🎂 I know you might not feel the same way I do 🥺, and I respect that more than you know 🙏💙 But I couldn’t let May 16th pass without telling you how much you mean to me 💌 You’ve become the brightest part of my days ☀️🌟 — your smile 😊, your laugh 😂, the way you see the world 🌍👀… they’ve changed me 💫 I hope today brings you nothing but happiness 🥳, love 💖, and all the things that make your heart light up ✨💡 You deserve a year that’s as kind and beautiful as you are 🌸🌻 Thank you for just being you 🙌💙 I’m grateful I got to know you, no matter what 🫶✨
+`;
+
+    let letter =
+    document.getElementById("loveLetter");
+
+    letter.style.display = "block";
+
+    let i = 0;
+
+    function typing(){
+
+        if(i < message.length){
+
+            letter.innerHTML +=
+            message.charAt(i);
+
+            i++;
+
+            setTimeout(typing,50);
+        }
+    }
+
+    typing();
+}
+</script>
+
+</body>
+</html>
